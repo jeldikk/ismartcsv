@@ -1,0 +1,8 @@
+venv/
+.spyproject/
+__pycache__/
+.vscode/
+full_data/
+test/
+examples/
+setup.py
