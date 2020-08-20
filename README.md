@@ -54,9 +54,11 @@ lemme dissect the above csv data and write the ismartcsv configuration file. we 
 
 
 #### Important sections of configuration file
-**```input```** config section declares ismartcsv module to read the numbered columns and store that parsed data into a variable of provided field name.
+**```fields```** config section declares ismartcsv module to read the numbered columns and store that parsed data into a variable of provided field name.
 
 **```interpolate```** config section is used by ismartcsv to pivot a particular input field for interpolation. the values of field name specified as pivot, should be either monotonically increasing or decreasing.
+
+**```output```** config section is used by ismartcsv while creating a output file from the processed data.
 
 **```plot```** config section specifies how and what to plot when plotting action invoked. 
 
@@ -71,7 +73,7 @@ timestamp_in_filename: true
 
 # ftype can be 'int', 'float', 'datetime'
 
-input:
+fields:
     - name: "height"
       colno: 1
       ftype: float
@@ -98,10 +100,12 @@ input:
 
 
 interpolation:
-  - pivot: "height"
+  pivot: "height"
 
 
-output: ["height","u","v"]
+output: 
+	fields: ["height","u","v"]
+	labels: ['Height(km)', 'U(mps)', 'V(mps)']
 
 plot:
   type: 'line'
