@@ -103,7 +103,7 @@ interpolation:
   pivot: "height"
 
 
-output: 
+output:
 	fields: ["height","u","v"]
 	labels: ['Height(km)', 'U(mps)', 'V(mps)']
 
