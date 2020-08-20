@@ -104,8 +104,8 @@ interpolation:
 
 
 output:
-	fields: ["height","u","v"]
-	labels: ['Height(km)', 'U(mps)', 'V(mps)']
+  fields: ["height","u","v"]
+  labels: ['Height(km)', 'U(mps)', 'V(mps)']
 
 plot:
   type: 'line'
