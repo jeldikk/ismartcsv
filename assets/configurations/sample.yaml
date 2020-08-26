@@ -1,0 +1,34 @@
+delimiter: ","
+datetime_format: null
+skip_lines: 5
+field_count: 4
+filename_format: null
+timestamp_in_filename: false
+
+#col number indexing starts from 0 ... n-1
+#ifnull is value used when exception raises during parsing; space in value
+#nulval is the value used by the instrument to represent null data
+fields:
+    - name: obsdate
+      colno: 1
+      ftype: datetime
+      ifnull: null
+      nullval: null
+
+    - name: temp
+      colno: 3
+      ftype: float
+      ifnull: 24
+      nullval: 99999
+
+    - name: pressure
+      colno: 5
+      ftype: float
+      ifnull: 24
+      nullval: 99999
+
+    - name: humidity
+      colno: 10
+      ftype: float
+      ifnull: null
+      nullval: 99999

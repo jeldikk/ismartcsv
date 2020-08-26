@@ -1,0 +1,82 @@
+delimiter: ","
+datetime_format: null
+skip_lines: 1
+field_count: 7
+filename_format: "uvwD%Y%m%dT%H%M%S.csv"
+timestamp_in_filename: true
+
+# ftype can be 'int', 'float', 'datetime'
+
+fields:
+    - name: height
+      colno: 1
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+
+    - name: "u"
+      colno: 2
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+
+    - name: "v"
+      colno: 3
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+
+    - name: "w"
+      colno: 4
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+
+    - name: "wd"
+      colno: 5
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+
+    - name: "zsnr"
+      colno: 6
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+
+    - name: "zdop"
+      colno: 7
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+
+
+interpolation:
+  pivot: "height"
+  start: 2
+  stop: 20
+  step: 0.01
+
+output: 
+  fields: ["height","u","v","w"]
+  labels: ['Height(km)', 'U(mps)', "V(mps)", "W(mps)"]
+
+
+plot:
+  file:
+    xaxis: null
+    yaxis: 'height'
+  
+  folder:
+    xaxis: 'timestamp'
+    yaxis: 'height'
+
+
+

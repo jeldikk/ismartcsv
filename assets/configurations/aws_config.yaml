@@ -1,0 +1,43 @@
+# AWS20180101-44063.5096636458
+
+delimiter: ","
+datetime_format: "%d-%m-%Y %H:%M:%S"
+skip_lines: 1
+field_count: 4
+filename_format: "AWS%Y%m%d.CSV"
+timestamp_in_filename: true
+
+fields:
+    - name: 'timestamp'
+      colno: 1
+      ftype: datetime
+      ifnull: null
+      nullval: null
+
+    - name: 'temperature'
+      colno: 2
+      ftype: float
+      ifnull: null
+      nullval: null
+
+    - name: 'humidity'
+      colno: 3
+      ftype: float
+      ifnull: null
+      nullval: null
+
+    - name: 'pressure'
+      colno: 4
+      ftype: float
+      ifnull: null
+      nullval: null
+
+
+output:
+    fields: ['timestamp', 'temperature', 'humidity']
+    labels: ['ExpDateTime', 'Temperature', 'Humidity']
+
+plot:
+    type: 'line'
+    xaxis: 'timestamp'
+    yaxis: null

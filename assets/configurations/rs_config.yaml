@@ -1,0 +1,11 @@
+# GPSRS20190702-44063.5160289005.CSV
+
+delimiter: ','
+datetime_format: "%d-%m-%Y %H:%M:%S"
+skip_lines: 1
+field_count: 1
+filename_format: "GPSRS%Y%m%d-*.CSV"
+timestamp_in_filename: true
+
+fields:
+    
