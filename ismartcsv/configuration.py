@@ -10,7 +10,7 @@ from collections import namedtuple
 
 field_tuple = namedtuple(
     'field_info',
-    ['name', 'colno', 'ftype', 'factor', 'ifnull', 'nullval']
+    ['name', 'colno', 'ftype', 'factor', 'ifnull', 'nullval', 'label', 'units']
 )
 
 
@@ -72,6 +72,7 @@ class config_file(object):
 
 
 
+
     def __getitem__(self, ind):
 
         """this is called to access items using index
@@ -86,12 +87,12 @@ class config_file(object):
             [type]: [description]
         """
 
-
         if ind > self.__dt['field_count'] - 1:
             raise IndexError("Index is out of bounds")
 
         return self.__field_data[ind]
 
+        
     def __getattr__(self, attr):
 
         if attr in self.__dt.keys():
@@ -109,13 +110,34 @@ class config_file(object):
 
         return self.__dt['field_count']
 
+
+    def get_field(self,name):
+
+
+        ind = self.__field_name_to_index(name)
+        return self.__field_data[ind]
+
+
+
+    def __field_name_to_index(self,name):
+
+        for ind,val in enumerate(self.field_labels()):
+            if val == name:
+                return ind
+        
+        if val ==  self.field_count:
+            raise ValueError(f"No field data with {name} registered")
+
+
     def is_interpolatable(self):
 
         return True if self.__dt.get('interpolation') else False
 
+        
     def is_plottable(self):
 
         return True if self.__dt.get('plot') else False
+
 
     def is_valid(self):
 
@@ -154,7 +176,6 @@ class config_file(object):
 
 
 
-
 def make_fielddata(**kwargs):
     return field_tuple(
         kwargs['name'],
@@ -162,5 +183,7 @@ def make_fielddata(**kwargs):
         kwargs['ftype'],
         kwargs['factor'],
         kwargs['ifnull'],
-        kwargs['nullval']
+        kwargs['nullval'],
+        kwargs['label'],
+        kwargs['units']
     )
