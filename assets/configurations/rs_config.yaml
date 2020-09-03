@@ -1,11 +1,91 @@
-# GPSRS20190702-44063.5160289005.CSV
-
-delimiter: ','
-datetime_format: "%d-%m-%Y %H:%M:%S"
+delimiter: ","
+datetime_format: null
 skip_lines: 1
-field_count: 1
-filename_format: "GPSRS%Y%m%d-*.CSV"
+field_count: 6
+filename_format: "GPSRS%Y%m%d.CSV"
 timestamp_in_filename: true
 
+# ftype can be 'int', 'float', 'datetime'
+
 fields:
-    
+    - name: height
+      colno: 2
+      ftype: float
+      factor: 0.001
+      ifnull: null
+      nullval: null
+      label: 'Height'
+      units: 'km'
+
+    - name: "ws"
+      colno: 3
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Wind Speed'
+      units: 'm/s'
+
+    - name: "wd"
+      colno: 4
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Wind Direction'
+      units: 'deg'
+
+    - name: "temperature"
+      colno: 5
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Temperature'
+      units: 'deg-centi'
+
+    - name: "pressure"
+      colno: 6
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Pressure'
+      units: 'mbar'
+
+    - name: "humidity"
+      colno: 7
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Humidity(g/m3)'
+      units: 'g/m3'
+
+interpolation:
+  pivot: "height"
+  
+  ## meta-data needed for folder reading
+  start: 0.36
+  stop: 31
+  step: 0.005
+
+
+#Useful for writing data to output files( flash memory)
+output: 
+  fields: ["height","ws","wd","temperature"]
+
+
+plot:
+  file:
+    xaxis: null
+    yaxis: 'height'
+    fields: ['height','ws','wd','temperature','pressure','humidity']
+  
+  folder:
+    xaxis: 'timestamp'
+    yaxis: 'height'
+    fields: ['height','ws', 'wd', 'temperature', 'pressure', 'humidity']
+
+
+

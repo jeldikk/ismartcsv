@@ -8,12 +8,14 @@ timestamp_in_filename: true
 # ftype can be 'int', 'float', 'datetime'
 
 fields:
-    - name: height
+    - name: "height"
       colno: 1
       ftype: float
       factor: 1
       ifnull: null
       nullval: null
+      label: 'Height'
+      units: 'km'
 
     - name: "u"
       colno: 2
@@ -21,6 +23,8 @@ fields:
       factor: 1
       ifnull: null
       nullval: null
+      label: 'Zonal Wind'
+      units: 'm/s'
 
     - name: "v"
       colno: 3
@@ -28,6 +32,8 @@ fields:
       factor: 1
       ifnull: null
       nullval: null
+      label: 'Meridional Wind'
+      units: 'm/s'
 
     - name: "w"
       colno: 4
@@ -35,6 +41,8 @@ fields:
       factor: 1
       ifnull: null
       nullval: null
+      label: 'Vertical Wind'
+      units: 'm/s'
 
     - name: "wd"
       colno: 5
@@ -42,6 +50,8 @@ fields:
       factor: 1
       ifnull: null
       nullval: null
+      label: 'Wind Direction'
+      units: 'deg'
 
     - name: "zsnr"
       colno: 6
@@ -49,6 +59,8 @@ fields:
       factor: 1
       ifnull: null
       nullval: null
+      label: 'Zenith SNR'
+      units: 'dB'
 
     - name: "zdop"
       colno: 7
@@ -56,27 +68,36 @@ fields:
       factor: 1
       ifnull: null
       nullval: null
+      label: 'Zenith'
+      units: 'TBD'
+
 
 
 interpolation:
   pivot: "height"
+  
+  ## meta data need to folder reading
   start: 2
   stop: 20
-  step: 0.01
+  step: 0.005
+
 
 output: 
   fields: ["height","u","v","w"]
   labels: ['Height(km)', 'U(mps)', "V(mps)", "W(mps)"]
 
 
+
 plot:
   file:
     xaxis: null
     yaxis: 'height'
+    fields: ['height','ws','wd','temperature','pressure','humidity']
   
   folder:
     xaxis: 'timestamp'
     yaxis: 'height'
+    fields: ['height','ws','wd','temperature','pressure','humidity']
 
 
 
