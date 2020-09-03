@@ -11,7 +11,11 @@ import copy
 import json
 import collections
 import numpy as np
+
+
+from .configuration import config_file
 from .utilities import str2timestamp, is_increasing, timestamp2str
+from .plotting import plot_line
 
 
 class dataset(abc.ABC):
@@ -21,43 +25,43 @@ class dataset(abc.ABC):
         abc ([type]): [description]
     """
 
+    # @abc.abstractmethod
+    # def __add__(self, other):
+    #     pass
+
+    # @abc.abstractmethod
+    # def __truediv__(self, val):
+    #     pass
+
     @abc.abstractmethod
-    def __add__(self, other):
+    def to_csv(self, filename):
         pass
 
     @abc.abstractmethod
-    def __truediv__(self, val):
+    def to_netcdf(self, filename):
         pass
 
     @abc.abstractmethod
-    def to_csv(self):
-        pass
-
-    @abc.abstractmethod
-    def to_netcdf(self):
-        pass
-
-    @abc.abstractmethod
-    def to_mat(self):
+    def to_mat(self, filename):
         pass
 
     @abc.abstractmethod
     def to_json(self):
         pass
 
+    @abc.abstractmethod
+    def plot(self):
+        pass
 
 
 class datafile(dataset):
 
-    # __data = None
 
     def __init__(self, datalist, config, basename=None, *args, **kwargs):
 
-        # if not config.is_valid():
-        #     raise ValueError("Invalid configuration object provided")
-
         self.__data = collections.OrderedDict()
         self.__bname = basename
+        self.__length = len(datalist)
 
         for field in config.field_labels:
             self.__data[field] = list()
@@ -76,6 +80,9 @@ class datafile(dataset):
             for field in config.field_labels:
                 self.__data[field].append(dict_ele[field])
 
+    def __del__(self):
+        del self.__data
+        # del self.__config
 
     @property
     def config(self):
@@ -93,7 +100,8 @@ class datafile(dataset):
     def timestamp(self):
 
         if not self.config.timestamp_in_filename:
-            raise NotImplementedError("timestamp_in_filename field is not defined in the configuration file")
+            raise NotImplementedError(
+                "timestamp_in_filename field is not defined in the configuration file")
 
         return self.__tm
 
@@ -104,38 +112,94 @@ class datafile(dataset):
 
         return self.__bname
 
-    def __add__(self, other):
-        pass
-
-    def __truediv__(self, other):
-        pass
-
-    def to_csv(self):
-        pass
-
-    def to_netcdf(self):
-        pass
-
-    def to_mat(self):
-        pass
-
-    def to_json(self):
-        pass
 
     def __len__(self):
-        first_label = self.__config.fields[0].name
-        return len(self(first_label))
+
+        """get the number of valid samples recorded from the file
+
+        Returns:
+            int: Length of data of each field
+        """
+
+        return self.__length
+
 
     def __getitem__(self, slc):
-        temp_data = collections.OrderedDict()
+        
+        if isinstance(slc,int):
 
-        for label in self.fields:
-            temp_data[label] = copy.copy(np.array(self.__data.get(label))[slc])
+            if slc > self.__length:
+                raise IndexError(f"index: {slc} is out of range")
 
-        if self.__config.timestamp_in_filename:
-            return ismart_chunk(temp_data, self.__tm)
-        else:
-            return ismart_chunk(temp_data)
+            item = dict()
+            for field in self.__config.field_labels:
+                item[field] = self.__data[field][slc]
+            return item
+
+        elif isinstance(slc,slice):
+            
+            dtlist = list()
+            start,stop,step = slc.indices(self.__length)
+            
+            for index in range(start,stop,step):
+                item = self[index]
+                dtlist.append(item)
+
+            return datafile(dtlist,self.__config,self.__bname)
+
+
+    def get_interpolator(self,pivot=None):
+        
+        """A Closure which returns a interpolator function drived out of instance created
+
+        Arguments:
+            instance {datafile or ismart_chunk} -- instances whose classes define fields and __call__ methods
+            wrt {[type]} -- [description]
+
+        Raises:
+            ValueError: wrt argument should be one of the fields defined in instance object
+            RuntimeError: if the wrt fields values are not in increasing order this is raised
+
+        Returns:
+            [dataset.datafile] -- datafile object with interpolated values derived 
+        """
+        if pivot is None:
+            if not self.__config.is_interpolatable():
+                raise AssertionError("No pivot label provided in config file or as argument")
+            else:
+                pivot = self.__config.interpolation.get('pivot')
+
+        if not pivot in self.fields:
+            raise ValueError(f"{pivot} field not found in configured labels")
+
+        if not is_increasing(self(pivot)):
+            raise RuntimeError(f"data of field {pivot} is not in increasing order")
+
+        def file_interp_func(wrt_ticks):
+
+            ret_data = collections.OrderedDict()
+            for field in self.fields:
+                if field == pivot:
+                    ret_data[field] = wrt_ticks
+                else:
+                    ret_data[field] = np.interp(
+                        wrt_ticks,
+                        self(pivot),
+                        self(field),
+                        left=np.NaN,
+                        right=np.NaN
+                        
+                    )
+            datalist = list()
+            for ind in range(len(wrt_ticks)):
+                sample_dict = dict()
+                for field in self.fields:
+                    sample_dict[field] = ret_data[field][ind]
+                datalist.append(sample_dict)
+            
+            return datafile(datalist,self.__config,self.__bname)
+        
+        return file_interp_func
 
     def __call__(self, param):
 
@@ -151,129 +215,218 @@ class datafile(dataset):
         else:
             return np.array(self.data.get(param))
 
-    # def create_interpolater(self, wrt):
+    
+    @staticmethod
+    def create_instance(datadict,config,basename=None):
+        
+        if not isinstance(datadict,dict):
+            raise ValueError("data should be given in form of dict of lists")
 
-    #     if not wrt in self.fields:
-    #         raise ValueError("No such field available by name {} ".format(by))
+        if not isinstance(config,config_file):
+            raise ValueError("argument config should be of type config_file")
 
-    #     # all(i <= j for i, j in zip(self.data.get(wrt), self.data.get(wrt)[1:])):
-    #     if not is_increasing(self.data.get(wrt)):
-    #         raise RuntimeError(
-    #             "data in {} is not strictly sorted to interpolate".format(wrt)
-    #         )
+        dtlist = list()
+        length = len(datadict[config.field_labels[0]])
 
-    #     def interp_func(wrt_ticks):
-    #         ret_data = collections.OrderedDict()
-    #         for field in self.fields:
-    #             if field == wrt:
-    #                 ret_data[field] = wrt_ticks
-    #             else:
-    #                 ret_data[field] = np.interp(
-    #                     wrt_ticks,
-    #                     self(wrt),
-    #                     self(field),
-    #                     left=np.NaN,
-    #                     right=np.NaN
-    #                 )
-    #         if self.__config.timestamp_in_filename:
-    #             return ismart_chunk(ret_data, self.__tm)
-    #         else:
-    #             return ismart_chunk(ret_data)
-
-    #     return interp_func
-
-    def _to_user_interface(self, limits):
-
-        item_list = list()
-        for ind in range(len(self)):
+        for i in range(length):
             item = dict()
-            for field in self.__config.fields:
-                if field.ftype == 'float':
-                    item[field.name] = round(self(field.name)[ind], 4)
-                elif field.ftype == 'datetime':
-                    item[field.name] = timestamp2str(
-                        self(field.name)[ind], self.__config.datetime_format)
-            if ind < limits['asc_start']:
-                item['traverse'] = 's'
-            elif limits['asc_start'] <= ind <= limits['dsc_start']:
-                item['traverse'] = 'a'
-            elif ind > limits['dsc_start']:
-                item['traverse'] = 'd'
-
-            item_list.append(item)
-
-        return item_list
+            for field in config.field_labels:
+                item[field] = datadict[field][i]
+            dtlist.append(item)
+        
+        return datafile(dtlist,config,basename)
 
 
-class datafolder(dataset):
-    __data = None
-
-    def __init__(self, foldername, config, *args, **kwargs):
+    def to_csv(self, filename):
         pass
 
-    def __add__(self, other):
+    def to_netcdf(self, filename):
         pass
 
-    def __truediv__(self, other):
-        pass
-
-    def to_csv(self):
-        pass
-
-    def to_netcdf(self):
-        pass
-
-    def to_mat(self):
+    def to_mat(self, filename):
         pass
 
     def to_json(self):
         pass
 
 
-# class ismart_chunk(object):
+    def plot(self):
 
-#     def __init__(self, dict_chunk, timestamp=None, *args, **kwargs):
+        if not self.__config.is_plottable():
+            raise NotImplementedError("Plotting configuration is defined in configuration, define one")
 
-#         if not isinstance(dict_chunk, collections.OrderedDict):
-#             raise ValueError("improper data chunk provided")
+        plot_line(self, xaxis=self.__config.plot['file']['xaxis'], yaxis=self.__config.plot['file']['yaxis'])
 
-#         self._data = dict_chunk
-#         self._labels = tuple(key for key in self._data.keys())
 
-#         if not timestamp is None:
-#             self.__tmstamp = timestamp
 
-#     @property
-#     def timestamp(self):
-#         try:
-#             return self.__tmstamp
-#         except:
-#             raise AttributeError("timestamp is not set in filename")
+class datafolder(dataset):
 
-#     @property
-#     def fields(self):
-#         return self._labels
+    def __init__(self, datafilelist, pivot_list, config, *args, **kwargs):
+        
+        self.__data = collections.OrderedDict()
 
-#     def __getattr__(self, label):
-#         if label in self._labels:
-#             return self._data.get(label)
-#         else:
-#             raise AttributeError("No key with name {} available".format(label))
+        for field in config.field_labels:
+            if field == config.interpolation['pivot']:
+                continue
+            self.__data[field] = None
 
-#     def __call__(self, label):
-#         if label in self._labels:
-#             return self._data.get(label)
-#         else:
-#             raise KeyError("No key with name {} availabel".format(label))
+        self.__config = config
+        self.__pivotlist = pivot_list
+        self.__filecount = len(datafilelist)
+        self.__length = len(pivot_list)
 
-#     def save_mat(self, filename):
-#         pass
 
-#     def save_csv(self, filename):
-#         pass
+        if config.timestamp_in_filename:
+            self.__tmlist = list()
 
-#     def to_csv(self):
-#         pass
+        if not all([True if isinstance(ele,datafile) else False for ele in datafilelist]):
+            raise ValueError("One/Some of the element is out of context")
 
-#     def to_json():
-#         pass
+        for df_ele in datafilelist:
+            for label in config.field_labels:
+
+                if label == config.interpolation['pivot']:
+                    continue
+
+                dataarr = df_ele(label)
+                
+                if self.__data[label] is None:
+                    self.__data[label] = dataarr
+                else:
+                    self.__data[label] = np.vstack((self.__data[label],dataarr))
+            
+            self.__tmlist.append(df_ele.timestamp)
+
+        for key in self.__data.keys():
+            self.__data[key] = self.__data[key].T
+
+    def __del__(self):
+        del self.__data
+
+    @property
+    def config(self):
+        return self.__config
+
+    @property
+    def data(self):
+        return self.__data
+
+    @property
+    def timestamps(self):
+        
+        if not self.__config.timestamp_in_filename:
+            raise NotImplementedError("Configuration setting timestamp_in_filename should be set")
+
+        return self.__tmlist
+
+    @property
+    def filecount(self):
+        return self.__filecount
+
+    @property
+    def fields(self):
+        return self.__config.field_labels
+
+    def __len__(self):
+        return self.__length
+
+
+    def __getitem__(self,slc):
+
+        if isinstance(slc,int):
+            
+            if slc > self.__length:
+                raise IndexError(f"index: {slc} is out of range")
+            
+            item = dict()
+            for field in self.__config.field_labels:
+                if field == self.__config.interpolation['pivot']:
+                    item[field] = self.__pivotlist[slc]
+                else:
+                    item[field] = self.__data[field][slc]
+            item['timestamp'] = self.__tmlist
+            
+            return item
+
+        elif isinstance(slc,slice):
+            
+            dflist = list()
+            start,stop,step = slc.indices(self.__length)
+            pivotlist = self.__pivotlist[start:stop:step]
+
+            for ind in range(self.filecount):
+                datadict = dict()
+                for label in self.fields:
+                    if label == self.__config.interpolation['pivot']:
+                        datadict[label] = pivotlist
+                    else:
+                        datadict[label] = self.__data.get(label,None)[start:stop:step,ind]
+                
+                bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
+
+                dflist.append(datafile.create_instance(datadict,self.config,basename=bname))
+            
+            return datafolder(dflist,pivotlist,self.config)
+
+
+    def __call__(self,label):
+        
+        if not label in self.config.field_labels:
+            raise KeyError(f"No such field {label} defined in configuration file")
+            
+        if label == self.__config.interpolation['pivot']:
+            if isinstance(self.__pivotlist,np.ndarray):
+                return self.__pivotlist
+            else:
+                return np.array(self.__pivotlist)
+            
+        return self.__data.get(label)
+
+
+    def get_interpolator(self):
+        # This will take pivot field of interpolation config section as reference
+        
+        pivot_label = self.__config.interpolation['pivot']
+
+        def folder_interp_func(wrt_ticks):
+
+            dflist = list()
+
+            for ind in range(self.filecount):
+                datadict = dict()
+                for label in self.fields:
+                    if label == pivot_label:
+                        datadict[label] = wrt_ticks
+                    else:
+                        datadict[label] = np.interp(
+                            wrt_ticks,
+                            self.__pivotlist,
+                            self.__data.get(label,None)[:,ind],
+                            left=np.NaN,
+                            right=np.NaN
+                        )
+                bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
+                dflist.append(datafile.create_instance(datadict,self.config,basename=bname))
+
+            return datafolder(dflist,wrt_ticks,self.__config)
+
+        return folder_interp_func
+
+
+
+    def to_csv(self, filename):
+        raise NotImplementedError("Cannot put a batch of datafiles in a single .csv file")
+
+    def to_netcdf(self, filename):
+        pass
+
+    def to_mat(self, filename):
+        pass
+
+    def to_json(self):
+        pass
+
+    def plot(self):
+        pass
+
+
