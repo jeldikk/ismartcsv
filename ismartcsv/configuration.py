@@ -8,6 +8,10 @@ Created on Tue Apr  7 20:10:54 2020
 import yaml
 from collections import namedtuple
 
+from .formatters import formatter
+
+# from .utilities import timestamp_parser
+
 field_tuple = namedtuple(
     'field_info',
     ['name', 'colno', 'ftype', 'factor', 'ifnull', 'nullval', 'label', 'units']
@@ -48,6 +52,15 @@ class config_file(object):
             # print(self.__dt['input'])
             self.__field_data.append(make_fielddata(**self.__dt['fields'][i]))
 
+        if self.__dt['timestamp_in_filename']:
+            self.__ffmt = formatter.make_formatter('filename',self.__dt['filename_format'])
+        else:
+            self.__ffmt = None
+
+
+
+        
+
     @property
     def field_labels(self):
 
@@ -70,7 +83,9 @@ class config_file(object):
 
         return self.__field_data
 
-
+    @property
+    def file_formatter(self):
+        return self.__ffmt
 
 
     def __getitem__(self, ind):
@@ -116,7 +131,6 @@ class config_file(object):
 
         ind = self.__field_name_to_index(name)
         return self.__field_data[ind]
-
 
 
     def __field_name_to_index(self,name):
