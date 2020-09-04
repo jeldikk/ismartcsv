@@ -38,7 +38,6 @@ class formatter(object):
 class filename_formatter(formatter):
     
     def __init__(self,format):
-        pass
 
         if format == None:
             self.__encfunc = None
@@ -60,11 +59,12 @@ class filename_formatter(formatter):
     
     def parse(self,arg):
         formatter.parse(self,arg)
-        self.__parsefunc(arg,self.__format)
+        return self.__parsefunc(arg,self.__format)
 
     def encode(self,arg):
         formatter.encode(self,arg)
-        self.__encfunc(arg,self.__format)
+        return self.__encfunc(arg,self.__format)
+         
 
 
 class datetime_formatter(formatter):
@@ -96,6 +96,8 @@ class datetime_formatter(formatter):
     def encode(self,arg):
         formatter.encode(self,arg)
         self.__encfunc(arg,self.__format)
+
+
 
 
 class field_formatter(formatter):
