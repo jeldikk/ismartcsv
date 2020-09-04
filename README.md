@@ -11,6 +11,8 @@ _**smaller learning curve**_
 
 #### What makes ismartcsv so special, let's talk about features and capabilities !!
 
+**_same method calls for different modes_**
+
 _**interpolation**_
 
 _**Basic plotting**_
@@ -19,8 +21,20 @@ _**facility to export data to multiple standard data formats**_
 
 #### what should I know before using ismartcsv module ?
 
-_**TBD**_
+This is a python module, especially meant for working with scientific instrument generated csv data. We expect you to have basic knowledge of writing python scripts, better understanding of import system in python, using numpy and plotting.
 
+
+### Using the module.
+
+#### Disclaimer while working with datafile
+
+**TBD**
+
+#### Disclaimer while working with datafolder
+
+**TBD**
+
+##### Important sections of configuration file
 
 The fields declared in the config file convey a special information essential for the code-engine to understand about the skeleton and behaviour of input datafile.
 
@@ -54,6 +68,7 @@ lemme dissect the above csv data and write the ismartcsv configuration file. we 
 
 
 #### Important sections of configuration file
+
 **```fields```** config section declares ismartcsv module to read the numbered columns and store that parsed data into a variable of provided field name.
 
 **```interpolate```** config section is used by ismartcsv to pivot a particular input field for interpolation. the values of field name specified as pivot, should be either monotonically increasing or decreasing.
@@ -67,7 +82,7 @@ lemme dissect the above csv data and write the ismartcsv configuration file. we 
 delimiter: ","
 datetime_format: null
 skip_lines: 1
-field_count: 4
+field_count: 7
 filename_format: "uvwD%Y%m%dT%H%M%S.csv"
 timestamp_in_filename: true
 
@@ -77,40 +92,109 @@ fields:
     - name: "height"
       colno: 1
       ftype: float
+      factor: 1
       ifnull: null
       nullval: null
+      label: 'Height'
+      units: 'km'
 
     - name: "u"
       colno: 2
       ftype: float
+      factor: 1
       ifnull: null
       nullval: null
+      label: 'Zonal Wind'
+      units: 'm/s'
 
     - name: "v"
       colno: 3
       ftype: float
+      factor: 1
       ifnull: null
       nullval: null
-    
+      label: 'Meridional Wind'
+      units: 'm/s'
+
     - name: "w"
       colno: 4
       ftype: float
+      factor: 1
       ifnull: null
       nullval: null
+      label: 'Vertical Wind'
+      units: 'm/s'
+
+    - name: "wd"
+      colno: 5
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Wind Direction'
+      units: 'deg'
+
+    - name: "zsnr"
+      colno: 6
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Zenith SNR'
+      units: 'dB'
+
+    - name: "zdop"
+      colno: 7
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Zenith'
+      units: 'TBD'
 
 
 interpolation:
   pivot: "height"
+  
+  ## meta data need to folder reading
+  start: 2
+  stop: 20
+  step: 0.005
 
 
-output:
-  fields: ["height","u","v"]
-  labels: ['Height(km)', 'U(mps)', 'V(mps)']
+output: 
+  fields: ["height","u","v","w"]
+  labels: ['Height(km)', 'U(mps)', "V(mps)", "W(mps)"]
+
+
 
 plot:
-  type: 'line'
-  xaxis: null
-  yaxis: 'height'
+  file:
+    xaxis: null
+    yaxis: 'height'
+    fields: ['height','ws','wd','temperature','pressure','humidity']
+  
+  folder:
+    xaxis: 'timestamp'
+    yaxis: 'height'
+    fields: ['height','ws','wd','temperature','pressure','humidity']
+
+
+#Advance timestamp processing
+parsers:
+  datetime: DATETIME_PARSER
+  filename: FILENAME_PARSER
+
+encoders:
+  datetime: DATETIME_ENCODER
+  filename: FILENAME_ENCODER
+
 
 ```
 
+
+#### Tool and libraries used
+
+see the content of requirements.txt file for libraries and modules used
+
+#### what can be done
