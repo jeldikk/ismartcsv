@@ -9,9 +9,6 @@ import datetime
 import copy
 import numpy as np
 import collections
-# from .dataset import ismart_chunk
-
-# from .dataset import datafile
 
 
 def str2timestamp(time_rep, datetime_format):
@@ -71,7 +68,7 @@ def is_decreasing(values):
     return all([i >= j for i, j in zip(values, values[1:])])
 
 
-def create_interpolator(instance, pivot):
+def create_file_interpolator(instance, pivot):
 
     """A Closure which returns a interpolator function drived out of instance created
 
@@ -88,6 +85,9 @@ def create_interpolator(instance, pivot):
     """
 
     from .dataset import datafile
+
+    if not isinstance(instance,datafile):
+        raise TypeError("Only accepts of type datafile, but got something else")
 
     if not pivot in instance.fields:
         raise ValueError("No such field available by name {}".format(pivot))
@@ -122,3 +122,5 @@ def create_interpolator(instance, pivot):
         return datafile(datalist,instance.config,instance.basename)
 
     return interp_func
+
+
