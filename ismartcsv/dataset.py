@@ -5,7 +5,7 @@ Created on Wed Apr  8 00:24:36 2020
 
 @author: jeldikk
 """
-
+import sys
 import abc
 import copy
 import json
@@ -70,11 +70,16 @@ class datafile(dataset):
 
         if config.timestamp_in_filename:
             if basename is None or config.filename_format is None:
+                print(basename,'/',config.filename_format)
                 raise ValueError(
                     "configuation error: either raw_name or filename_format is not provided"
                 )
             else:
-                self.__tm = str2timestamp(basename, config.filename_format)
+                # self.__tm = str2timestamp(basename, config.filename_format)
+                # print('basename in datafile:',basename)
+                # print(config.file_formatter)
+                self.__tm = config.file_formatter.parse(basename)
+                # print(self.__tm)
 
         for dict_ele in datalist:
             for field in config.field_labels:
@@ -227,12 +232,13 @@ class datafile(dataset):
 
         dtlist = list()
         length = len(datadict[config.field_labels[0]])
-
+        
         for i in range(length):
             item = dict()
             for field in config.field_labels:
                 item[field] = datadict[field][i]
             dtlist.append(item)
+
         
         return datafile(dtlist,config,basename)
 
@@ -256,6 +262,8 @@ class datafile(dataset):
             raise NotImplementedError("Plotting configuration is defined in configuration, define one")
 
         plot_line(self, xaxis=self.__config.plot['file']['xaxis'], yaxis=self.__config.plot['file']['yaxis'])
+
+
 
 
 
@@ -362,8 +370,8 @@ class datafolder(dataset):
                     else:
                         datadict[label] = self.__data.get(label,None)[start:stop:step,ind]
                 
-                bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
-
+                # bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
+                bname = self.__config.file_formatter.encode(self.__tmlist[ind])
                 dflist.append(datafile.create_instance(datadict,self.config,basename=bname))
             
             return datafolder(dflist,pivotlist,self.config)
@@ -405,7 +413,10 @@ class datafolder(dataset):
                             left=np.NaN,
                             right=np.NaN
                         )
-                bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
+                # bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
+                # print(self.__tmlist[ind])
+                
+                bname = self.__config.file_formatter.encode(self.__tmlist[ind])
                 dflist.append(datafile.create_instance(datadict,self.config,basename=bname))
 
             return datafolder(dflist,wrt_ticks,self.__config)
