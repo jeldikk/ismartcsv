@@ -15,7 +15,7 @@ import numpy as np
 
 from .configuration import config_file
 from .utilities import str2timestamp, is_increasing, timestamp2str
-from .plotting import plot_line
+from .plotting import plot_file, plot_folder
 
 
 class dataset(abc.ABC):
@@ -259,9 +259,19 @@ class datafile(dataset):
     def plot(self):
 
         if not self.__config.is_plottable():
-            raise NotImplementedError("Plotting configuration is defined in configuration, define one")
+            raise NotImplementedError("Plotting configuration is not defined in configuration, define one for file")
 
-        plot_line(self, xaxis=self.__config.plot['file']['xaxis'], yaxis=self.__config.plot['file']['yaxis'])
+        if self.__config.plot.get('file') is None:
+            raise ValueError("datafile plotting variants not provided")
+
+        # plot_line(self, xaxis=self.__config.plot['file']['xaxis'], yaxis=self.__config.plot['file']['yaxis'])
+        for variant in self.__config.plot['file']:
+
+            if variant['type'] == 'contour':
+                Warning("cannot plot a contour plot from a single dataset")
+                continue
+
+            plot_file(self, variant)
 
 
 
@@ -438,6 +448,18 @@ class datafolder(dataset):
         pass
 
     def plot(self):
-        pass
+        
+        if not self.__config.is_plottable():
+            raise NotImplementedError("Plotting configuration is not defined in configuration for folder")
+
+        if self.__config.plot.get('folder') is None:
+            raise ValueError("datafolder plotting variants not provided")
+
+        for variant in self.__config.plot['folder']:
+            if not  variant['type'] in ('line', 'contour', ):
+                raise ValueError("Undefined variant type is provided")
+            
+            plot_folder(self, variant)
+
 
 

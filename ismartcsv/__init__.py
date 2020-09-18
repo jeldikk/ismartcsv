@@ -5,7 +5,7 @@ import sys
 import numpy as np
 from .dataset import datafile, datafolder
 from .configuration import config_file
-from .plotting import plot_line
+# from .plotting import plot_file
 from .utilities import str2timestamp, create_file_interpolator
 from .formatters import formatter
 
@@ -41,49 +41,35 @@ def read_file(data_filename, config_filename,**kwargs):
             line_split = line.strip().split(config.delimiter)
             line_split = [line.strip() for line in line_split]
 
-            if not all([line_split[field.colno - 1] != field.nullval for field in config.fields]):
+            if not all([line_split[field.colno - 1] != field.nullval for key,field in config.fields.items()]):
                 continue
 
             sample_dict = dict()
 
-            for ind, field in enumerate(config.fields):
+            for key, field in config.fields.items():
 
                 samp_txt = line_split[field.colno-1]
-                # print(field.ftype)
                 try:
                     # print('before making formatter')
                     fmter = formatter.make_formatter(field.ftype, config.datetime_format)
-                    # print('fmter is ',fmter)
                     val = fmter.parse(samp_txt)
-                    # print(f'The value in readfile: {val}')
-                    # if field.ftype == 'int':
-                    #     val = int(samp_txt)
-                    # elif field.ftype == 'float':
-                    #     # print('I am here in float')
-                    #     val = float(samp_txt)
-                    # elif field.ftype == 'datetime':
-                    #     # print("I am in datetime")
-                    #     val = str2timestamp(samp_txt,config.datetime_format)
-                    #     # print("I am here in timestamp")
-                    #     # print(val)
-                    # else:
-                    #     raise TypeError(f"ftype error: no such {field.ftype} field type defined")
+                    # print(val)
                 except Exception as ex:
                     print(ex)
+                    # print('execption occured for ', fmter)
                     val = field.ifnull
                 finally:
                     # print(f'The value in readfile: {val}')
-                    sample_dict[field.name] = val * field.factor
+                    if field.ftype == 'datetime':
+                        # print("val in readfile :", val)
+                        sample_dict[field.name] = val
+                    else:
+                        sample_dict[field.name] = val * field.factor
 
             dict_list.append(sample_dict)
 
     return datafile(dict_list,config,os.path.basename(data_filename))
-    # else:
-    #     raise ValueError("Invalid configuration file settings.")
-
-
-
-
+    
 
 
 def read_folder(folder_name, config_filename):

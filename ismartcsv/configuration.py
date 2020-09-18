@@ -47,19 +47,18 @@ class config_file(object):
         with open(filename, 'r') as fp:
             self.__dt = yaml.load(fp, Loader=yaml.FullLoader)
 
-        self.__field_data = list()
+        self.__field_data = dict()
         for i in range(self.__dt['field_count']):
             # print(self.__dt['input'])
-            self.__field_data.append(make_fielddata(**self.__dt['fields'][i]))
+            # self.__field_data.append(make_fielddata(**self.__dt['fields'][i]))
+
+            temp_field = make_fielddata(**self.__dt['fields'][i])
+            self.__field_data[temp_field.name] = temp_field
 
         if self.__dt['timestamp_in_filename']:
             self.__ffmt = formatter.make_formatter('filename',self.__dt['filename_format'])
         else:
             self.__ffmt = None
-
-
-
-        
 
     @property
     def field_labels(self):
@@ -70,7 +69,7 @@ class config_file(object):
             tuple: all fields defined in the input config file
         """
 
-        return tuple(self.__field_data[i].name for i in range(len(self)))
+        return tuple(self.fields.keys())
 
     @property
     def fields(self):
@@ -78,7 +77,7 @@ class config_file(object):
         """property of config_file instance
 
         Returns:
-            list of dicts: contains list of all hashes containing input field info
+            dict with keys: contains list of all hashes containing input field info
         """
 
         return self.__field_data
@@ -105,7 +104,8 @@ class config_file(object):
         if ind > self.__dt['field_count'] - 1:
             raise IndexError("Index is out of bounds")
 
-        return self.__field_data[ind]
+        field_name = list(self.__field_data.keys())[ind]
+        return self.__field_data.get(field_name)
 
         
     def __getattr__(self, attr):
@@ -129,8 +129,8 @@ class config_file(object):
     def get_field(self,name):
 
 
-        ind = self.__field_name_to_index(name)
-        return self.__field_data[ind]
+        # ind = self.__field_name_to_index(name)
+        return self.__field_data.get(name)
 
 
     def __field_name_to_index(self,name):
@@ -151,6 +151,8 @@ class config_file(object):
     def is_plottable(self):
 
         return True if self.__dt.get('plot') else False
+
+    
 
 
     def is_valid(self):
@@ -176,7 +178,13 @@ class config_file(object):
         if self.__dt.get('output',None):
             output_cond = all([True if field in self.field_labels else False for field in self.__dt['output']['fields']])
             cond_checklist.append(output_cond)
+
+        # print(self.__dt.get('output', None))
+
+        # print(cond_checklist)
         
+
+
         # print(f"Number of checklist items {len(cond_checklist)}")
         if all(cond_checklist):
             # yet more conditions are to be implemented
