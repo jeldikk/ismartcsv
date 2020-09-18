@@ -1,9 +1,8 @@
 # AWS20180101-44063.5096636458
-
 delimiter: ","
 datetime_format: "%d-%m-%Y %H:%M:%S"
 skip_lines: 1
-field_count: 4
+field_count: 6
 filename_format: "AWS%Y%m%d.CSV"
 timestamp_in_filename: true
 
@@ -11,33 +10,83 @@ fields:
     - name: 'timestamp'
       colno: 1
       ftype: datetime
+      factor: 1
       ifnull: null
       nullval: null
+      label: 'Timestamp'
+      units: 'IST'
 
     - name: 'temperature'
       colno: 2
       ftype: float
+      factor: 1
       ifnull: null
       nullval: null
+      label: 'Temparature'
+      units: 'deg-centi'
 
     - name: 'humidity'
       colno: 3
       ftype: float
+      factor: 1
       ifnull: null
       nullval: null
+      label: 'Humidity'
+      units: 'gm/c3'
 
     - name: 'pressure'
       colno: 4
       ftype: float
+      factor: 1
       ifnull: null
       nullval: null
+      label: 'Pressure'
+      units: 'mbar'
 
+    - name: 'ws'
+      colno: 5
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Wind Speed'
+      units: 'm/s'
+
+    - name: 'wd'
+      colno: 6
+      ftype: float
+      factor: 1
+      ifnull: null
+      nullval: null
+      label: 'Wind Direction'
+      units: 'deg'
+
+interpolation:
+  pivot: "timestamp"
+
+  start: null
+  stop: null
+  step: null
 
 output:
     fields: ['timestamp', 'temperature', 'humidity']
-    labels: ['ExpDateTime', 'Temperature', 'Humidity']
 
 plot:
-    type: 'line'
+  file:
     xaxis: 'timestamp'
     yaxis: null
+    fields: ['temperature', 'humidity', 'pressure', 'ws', 'wd']
+
+  folder:
+    xaxis: 'line'
+    xaxis: 'filename'
+
+
+parser:
+  datetime: DATETIME_PARSER
+  filename: FILENAME_PARSER
+
+encoder:
+  datetime: DATETIME_ENCODER
+  filename: FILENAME_ENCODER
+  

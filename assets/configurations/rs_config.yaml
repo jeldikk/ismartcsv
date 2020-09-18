@@ -1,3 +1,5 @@
+#configuration template for data in assets/data/rs/ folder
+
 delimiter: ","
 datetime_format: null
 skip_lines: 1
@@ -5,10 +7,11 @@ field_count: 6
 filename_format: "GPSRS%Y%m%d.CSV"
 timestamp_in_filename: true
 
+
 # ftype can be 'int', 'float', 'datetime'
 
 fields:
-    - name: height
+    - name: "height"
       colno: 2
       ftype: float
       factor: 0.001
@@ -59,7 +62,7 @@ fields:
       factor: 1
       ifnull: null
       nullval: null
-      label: 'Humidity(g/m3)'
+      label: 'Humidity'
       units: 'g/m3'
 
 interpolation:
@@ -73,19 +76,30 @@ interpolation:
 
 #Useful for writing data to output files( flash memory)
 output: 
-  fields: ["height","ws","wd","temperature"]
+  fields: ["height", "ws", "wd", "temperature"]
 
 
 plot:
   file:
-    xaxis: null
-    yaxis: 'height'
-    fields: ['height','ws','wd','temperature','pressure','humidity']
+    - type: line
+      xaxis: height
+      yaxis: null
+      title: 'Line Plot with Height as x-axis'
+      fields: ['ws','wd','temperature','pressure','humidity']
+    
   
   folder:
-    xaxis: 'timestamp'
-    yaxis: 'height'
-    fields: ['height','ws', 'wd', 'temperature', 'pressure', 'humidity']
+    - type: line
+      xaxis: 'filestamp'
+      yaxis: 'height'
+      title: 'Line plot'
+      fields: ['ws', 'wd', 'temperature', 'pressure', 'humidity']
 
 
+parsers:
+  datetime: DATETIME_PARSER
+  filename: FILENAME_PARSER
 
+encoders:
+  datetime: DATETIME_ENCODER
+  filename: FILENAME_ENCODER
