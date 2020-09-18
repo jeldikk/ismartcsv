@@ -80,11 +80,12 @@ lemme dissect the above csv data and write the ismartcsv configuration file. we 
 ```yaml
 
 delimiter: ","
-datetime_format: null
 skip_lines: 1
 field_count: 7
 filename_format: "uvwD%Y%m%dT%H%M%S.csv"
+datetime_format: null
 timestamp_in_filename: true
+
 
 # ftype can be 'int', 'float', 'datetime'
 
@@ -152,35 +153,51 @@ fields:
       label: 'Zenith'
       units: 'TBD'
 
-
 interpolation:
   pivot: "height"
   
   ## meta data need to folder reading
   start: 2
   stop: 20
-  step: 0.005
-
+  step: 0.15
 
 output: 
-  fields: ["height","u","v","w"]
-  labels: ['Height(km)', 'U(mps)', "V(mps)", "W(mps)"]
-
-
+  fields: ["height", "u", "v", "w"]
 
 plot:
   file:
-    xaxis: null
-    yaxis: 'height'
-    fields: ['height','ws','wd','temperature','pressure','humidity']
+    - type: line
+      xaxis: null
+      yaxis: 'height'
+      title: 'file sample'
+      fields: ["u", "v", "w", "wd", "zsnr", "zdop"]
+
+    - type: line
+      xaxis: 'height'
+      yaxis: null
+      title: 'another file sample'
+      fields: ['u', 'v', 'w', 'wd', 'zsnr', 'zdop']
   
+
   folder:
-    xaxis: 'timestamp'
-    yaxis: 'height'
-    fields: ['height','ws','wd','temperature','pressure','humidity']
+    - type: 'line'
+      xaxis: null
+      yaxis: height
+      title: 'Line Plot'
+      fields: ["u", "v", "w"]
 
+    - type: 'contour'
+      xaxis: 'filestamp'
+      yaxis: 'height'
+      title: 'contour plot'
+      fields: ["u", "v", "w", "wd"]
 
-#Advance timestamp processing
+    - type: 'contour'
+      xaxis: 'filestamp'
+      yaxis: 'height'
+      title: 'sample contour plot'
+      fields: ['u', 'v']
+
 parsers:
   datetime: DATETIME_PARSER
   filename: FILENAME_PARSER
@@ -188,7 +205,6 @@ parsers:
 encoders:
   datetime: DATETIME_ENCODER
   filename: FILENAME_ENCODER
-
 
 ```
 
