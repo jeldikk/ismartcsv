@@ -1,6 +1,6 @@
 #configuration template for data in assets/data/rs/ folder
 
-delimiter: ","
+delimiter: "comma"
 datetime_format: null
 skip_lines: 1
 field_count: 6

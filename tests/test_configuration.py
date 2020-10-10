@@ -33,7 +33,7 @@ class TestConfigParser(unittest.TestCase):
     def test_attributes(self):
         # print(self.config.interpolation['pivot'])
         
-        self.assertEqual(self.config.delimiter,',')
+        self.assertEqual(self.config.delimiter,'comma')
         self.assertTrue(self.config.timestamp_in_filename)
         self.assertTrue(self.config.is_interpolatable(), "No interpolation config defined")
         self.assertTrue(self.config.is_plottable(), "No plot config defined")

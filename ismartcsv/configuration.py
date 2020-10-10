@@ -135,7 +135,7 @@ class config_file(object):
 
     def __field_name_to_index(self,name):
 
-        for ind,val in enumerate(self.field_labels()):
+        for ind,val in enumerate(self.field_labels):
             if val == name:
                 return ind
         

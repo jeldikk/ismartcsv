@@ -23,6 +23,14 @@ def read_file(data_filename, config_filename,**kwargs):
     if not config.is_valid():
         raise ValueError("Invalid configuration")
 
+    if config.delimiter == 'comma':
+        delimiter = ','
+    elif config.delimiter == 'tab':
+        delimiter = '\t'
+    elif config.delimiter == 'space':
+        delimiter = ' '
+
+
     
     # if config.is_valid():
     with open(data_filename,"r") as filep:
@@ -38,7 +46,7 @@ def read_file(data_filename, config_filename,**kwargs):
             if len(line) == 0:
                 break
 
-            line_split = line.strip().split(config.delimiter)
+            line_split = line.strip().split(delimiter)
             line_split = [line.strip() for line in line_split]
 
             if not all([line_split[field.colno - 1] != field.nullval for key,field in config.fields.items()]):

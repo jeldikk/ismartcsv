@@ -1,5 +1,5 @@
 # AWS20180101-44063.5096636458
-delimiter: ","
+delimiter: "comma"
 datetime_format: "%d-%m-%Y %H:%M:%S"
 skip_lines: 1
 field_count: 6
