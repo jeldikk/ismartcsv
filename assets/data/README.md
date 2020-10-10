@@ -11,7 +11,7 @@ The sample data taken here is just for demonstrating the features of the ismartc
 
 1. Go to url www.narl.gov.in
 2. Hover on navigation menu item _**DATA/EXPERIMENT**_ to get a dropdown with different options
-3. click on **_View & Download Data_**, and you will be taken to a seperate page to select the instrument you are interested. lick on the instrument data you want to download
+3. click on **_View & Download Data_**, and you will be taken to a seperate page to select the instrument you are interested. click on the instrument data you want to download
 4. Select the date, enter the details and captcha to download the data.
 
 
