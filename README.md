@@ -85,7 +85,7 @@ lemme dissect the above csv data and write the ismartcsv configuration file. we 
 
 ```yaml
 
-delimiter: "," # delimiter can have values ['comma', 'tab', 'space']
+delimiter: "comma" # delimiter can have values ['comma', 'tab', 'space']
 skip_lines: 1
 field_count: 7
 filename_format: "uvwD%Y%m%dT%H%M%S.csv"
