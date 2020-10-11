@@ -3,7 +3,6 @@ venv/
 __pycache__/
 .vscode/
 full_data/
-examples/
 build/
 dist/
 setup.py
