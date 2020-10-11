@@ -30,8 +30,6 @@ def read_file(data_filename, config_filename,**kwargs):
     elif config.delimiter == 'space':
         delimiter = ' '
 
-
-    
     # if config.is_valid():
     with open(data_filename,"r") as filep:
 
@@ -59,7 +57,11 @@ def read_file(data_filename, config_filename,**kwargs):
                 samp_txt = line_split[field.colno-1]
                 try:
                     # print('before making formatter')
-                    fmter = formatter.make_formatter(field.ftype, config.datetime_format)
+                    if field.ftype == 'datetime':
+                        fmter = config.timestamp_formatter
+                    else:
+                        fmter = formatter.make_formatter(field.ftype, config.datetime_format)
+                    
                     val = fmter.parse(samp_txt)
                     # print(val)
                 except Exception as ex:

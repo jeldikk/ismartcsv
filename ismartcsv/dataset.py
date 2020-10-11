@@ -78,7 +78,7 @@ class datafile(dataset):
                 # self.__tm = str2timestamp(basename, config.filename_format)
                 # print('basename in datafile:',basename)
                 # print(config.file_formatter)
-                self.__tm = config.file_formatter.parse(basename)
+                self.__tm = config.filestamp_formatter.parse(basename)
                 # print(self.__tm)
 
         for dict_ele in datalist:
@@ -102,7 +102,7 @@ class datafile(dataset):
         return self.__data
 
     @property
-    def timestamp(self):
+    def filestamp(self):
 
         if not self.config.timestamp_in_filename:
             raise NotImplementedError(
@@ -313,7 +313,7 @@ class datafolder(dataset):
                 else:
                     self.__data[label] = np.vstack((self.__data[label],dataarr))
             
-            self.__tmlist.append(df_ele.timestamp)
+            self.__tmlist.append(df_ele.filestamp)
 
         for key in self.__data.keys():
             self.__data[key] = self.__data[key].T
@@ -381,7 +381,7 @@ class datafolder(dataset):
                         datadict[label] = self.__data.get(label,None)[start:stop:step,ind]
                 
                 # bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
-                bname = self.__config.file_formatter.encode(self.__tmlist[ind])
+                bname = self.__config.filestamp_formatter.encode(self.__tmlist[ind])
                 dflist.append(datafile.create_instance(datadict,self.config,basename=bname))
             
             return datafolder(dflist,pivotlist,self.config)
@@ -426,7 +426,7 @@ class datafolder(dataset):
                 # bname = timestamp2str(self.__tmlist[ind],self.__config.filename_format)
                 # print(self.__tmlist[ind])
                 
-                bname = self.__config.file_formatter.encode(self.__tmlist[ind])
+                bname = self.__config.filestamp_formatter.encode(self.__tmlist[ind])
                 dflist.append(datafile.create_instance(datadict,self.config,basename=bname))
 
             return datafolder(dflist,wrt_ticks,self.__config)

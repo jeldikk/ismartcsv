@@ -50,10 +50,20 @@ class filename_formatter(formatter):
 
 
     def set_encoder(self,encoder_func):
+        """set a customised encoder function to python object to string based on format in constructor
+
+        Args:
+            encoder_func ([function]): [This is a two argument function, first argument is the python object and other is the format given in constructor]
+        """
         self.__encfunc = encoder_func
 
 
     def set_parser(self, parser_func):
+        """set a customised parser function to convert string to python object based on format given to constructor
+
+        Args:
+            parser_func ([function]): [A two argument function, first arg is the string and other is argument is provided while definig constructor]
+        """
         self.__parsefunc = parser_func
 
     
@@ -104,7 +114,14 @@ class field_formatter(formatter):
     
     def __init__(self,format):
         # print(f"field type of {format}")
+        """constructor for handling integer and float field types
+
+        Args:
+            format ([type]): [description]
+        """
         self.__format = format
+
+    
 
 
     def parse(self,args):

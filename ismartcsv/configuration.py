@@ -55,10 +55,32 @@ class config_file(object):
             temp_field = make_fielddata(**self.__dt['fields'][i])
             self.__field_data[temp_field.name] = temp_field
 
-        if self.__dt['timestamp_in_filename']:
-            self.__ffmt = formatter.make_formatter('filename',self.__dt['filename_format'])
-        else:
-            self.__ffmt = None
+        self.__ffmt = formatter.make_formatter('filename', self.__dt['filename_format'])
+        self.__dfmt = formatter.make_formatter('datetime', self.__dt['datetime_format'])
+
+
+
+        if not kwargs.get(self.__dt['parsers']['filename'], None) is None:
+            # print("filename parser is assigned")
+            self.__ffmt.set_parser(kwargs.get(self.__dt['parsers']['filename']))
+
+        if not kwargs.get(self.__dt['encoders']['filename'], None) is None:
+            # print("filename encoder is assigned")
+            self.__ffmt.set_encoder(kwargs.get(self.__dt['encoders']['filename']))
+
+        if not kwargs.get(self.__dt['parsers']['datetime'], None) is None:
+            # print("datetime parser is assigned")
+            self.__dfmt.set_parser(kwargs.get(self.__dt['parsers']['datetime']))
+
+        if not kwargs.get(self.__dt['encoders']['datetime'], None) is None:
+            # print("datetime encoder is assigned")
+            self.__dfmt.set_encoder(kwargs.get(self.__dt['encoders']['datetime']))
+
+
+        # if self.__dt['timestamp_in_filename']:
+        #     self.__ffmt = formatter.make_formatter('filename',self.__dt['filename_format'])
+        # else:
+        #     self.__ffmt = None
 
     @property
     def field_labels(self):
@@ -83,8 +105,13 @@ class config_file(object):
         return self.__field_data
 
     @property
-    def file_formatter(self):
+    def filestamp_formatter(self):
         return self.__ffmt
+
+
+    @property
+    def timestamp_formatter(self):
+        return self.__dfmt
 
 
     def __getitem__(self, ind):
