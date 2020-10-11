@@ -2,27 +2,31 @@
 ### A smart way to work with scientific friendly csv data in python. 
 ___ 
 
-Just declare all the meta, field and plot configurations required to analyse data in a seperate yaml config file with self explaining fields. Pass this configuration filename and data filename to ismartcsv code base through prebuilt adapter function that returns custom ismartcsv class instances. The configuration file thou created will work perfectly with all the datafiles obeying the schema declared in config file( _a sample template config file given below_ ). **_ismartcsv_** will consume and take care of all the duplicate bootstrap code and makes it happen behind the scenes.
+Just declare all the meta, field and plot configurations required to analyse data in a seperate yaml config file with self explaining fields. Pass this configuration filename and data filename to ismartcsv code base through prebuilt adapter function that returns custom ismartcsv class instances. The configuration file thou created will work perfectly with all the datafiles obeying the schema declared in config file( _a sample template config file given below_ ). **_ismartcsv_** will consume and take care of all the redundant bootstrap code and makes it easy behind the scenes.
 
 > Declarative style of working approach is best suitable in making analysis more lively and easily maintainable code. Same code base can do the job for different configuration files. 
 
 #### when we have other python libraries serving the similar purpose, Why use ismartcsv ?
 
-**True,** Python community is vast and has multitude of libraries which works like charm to handle csv data. But the libraries available in the python index are huge and most probably you may finally endup having to learn much more things just to handle csv file. As a result, you will be dwelling in the ascent part of learning curve. This learning curve can be minimised with ismartcsv, as you only need to learn how to generate configuration file specifying the schema of datafile.
+**True,** Python community is vast and has multitude of libraries which works like charm to handle csv data. But the libraries available in the pypi index are huge and most probably you may finally endup having to learn much more things just to handle csv file. As a result, your learning curve never saturates. This learning curve can be minimised with ismartcsv, as you only need to learn how to generate configuration file specifying the schema of datafile.
 
 #### What makes ismartcsv so special, let's talk about features and capabilities !!
 
-**_same method calls for different modes_**
+**_isomorphic method calls for different modes :_**
+
 ismartcsv offers two modes of creating ismartcsv class instances, one is by reading a file(`read_file`) and other is by reading a folder containing files(`read_folder`). Even though objects creating modes are different, the method calls to operate on data are maintained similar. 
 
-_**interpolation**_
+_**interpolation :**_
+
 ismartcsv offers inbuild linear interpolation feature, which is useful for creating data at intermediate dependent value. ismartcsv used interpolation configuration just to standardise multiple datafiles while reading folder. So interpolation section is required in order to read a folder.
 
 
-_**Basic plotting**_
+_**Basic plotting :**_
+
 ismartcsv offers prebuilt plotting layouts to view a single file instance(datafile) or set of datafile instances(datafolder). As of now, ismartcsv offers only line and contour plots.
 
-_**facility to export data to multiple standard data formats**_
+_**facility to export data to multiple standard data formats :**_
+
 As we know ismartcsv offers adapters/functions to create object instance by reading file from local filesystem. We can also export ismartcsv object to any standard output format( .csv, .mat, .nc)
 
 #### what should I know before using ismartcsv module ?
