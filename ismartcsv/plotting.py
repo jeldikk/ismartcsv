@@ -11,11 +11,23 @@ import numpy as np
 import matplotlib
 # matplotlib.use('QT5Agg')
 import matplotlib.pyplot as plt
+from matplotlib import cm as colormap
 import matplotlib.gridspec as gridspec
 
 
 def plot_file(instance, variant, *args, **kwargs):
 
+    """plotting function to render file variants of plot config section
+
+    Args:
+        instance (datafile): datafile object to be visualised
+        variant (dict): a part of plot section with file variant
+
+    Raises:
+        AssertionError: error raised when both xaxis and yaxis attributes of variant are None
+        ValueError: Error raised when xaxis field or yaxis field is not available in list of fields
+    """
+    
     plot_fields = variant['fields']
     xaxis = variant['xaxis']
     yaxis = variant['yaxis']
@@ -55,7 +67,8 @@ def plot_file(instance, variant, *args, **kwargs):
             if ind == 0:
                 temp_plot.set_ylabel(f"{yaxis_field.label}({yaxis_field.units})")
             # indices += 1
-
+        
+        fig.suptitle(window_title)
         fig.show()
 
     elif yaxis is None:
@@ -82,13 +95,17 @@ def plot_file(instance, variant, *args, **kwargs):
             if ind == len(plot_fields) - 1:
                 temp_plot.set_xlabel(f"{xaxis_field.label}({xaxis_field.units})")
 
+        fig.suptitle(window_title)
         fig.show()
 
 
 def plot_folder(instance, variant, *args, **kwargs):
+    """utility function to plot folder variant of plot config section 
 
-    # print(type(variant))
-    # print(variant)
+    Args:
+        instance (datafolder): ismartcsv datafolder instance
+        variant (dict): a variant of folder plot section
+    """
     
     ptype = variant['type']
     plot_fields = variant['fields']
@@ -117,7 +134,7 @@ def plot_folder(instance, variant, *args, **kwargs):
             if idx == 0:
                 temp_plot.set_ylabel(f'{yaxis_field.label}({yaxis_field.units})')
 
-        # fig.set_title(plot_title)
+        fig.suptitle(window_title)
         fig.show()
 
 
@@ -138,7 +155,7 @@ def plot_folder(instance, variant, *args, **kwargs):
             # print(field_data.shape)
             temp_plot = fig.add_subplot(spec[idx])
             cbar_levels = np.linspace(np.nanmin(field_data), np.nanmax(field_data), 10)
-            cntr = temp_plot.contourf(instance.timestamps, instance(yaxis), field_data, levels=cbar_levels, cmap=plt.cm.jet)
+            cntr = temp_plot.contourf(instance.timestamps, instance(yaxis), field_data, levels=cbar_levels, cmap= colormap.jet)
 
             # temp_plot.set_xticks(instance.timestamps)
             # temp_plot.set_yticks(instance(yaxis))
@@ -150,6 +167,7 @@ def plot_folder(instance, variant, *args, **kwargs):
 
             fig.colorbar(cntr, ax=temp_plot, ticks=cbar_levels)
 
+        fig.suptitle(window_title)
         fig.show()
 
     
@@ -164,7 +182,7 @@ def gps_balloon_traverse_phases(height_info):
     MIN_ASC_RATE = 1.5  # mps
 
     data_info = dict()
-    orig_copy = copy.copy(height_info)
+    # orig_copy = copy.copy(height_info)
     arr_length = len(height_info)
     # grad_data = np.gradient(height_info)
     diff_vals = np.diff(height_info)

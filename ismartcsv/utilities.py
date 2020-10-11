@@ -124,3 +124,31 @@ def create_file_interpolator(instance, pivot):
     return interp_func
 
 
+
+def gps_balloon_traverse_phases(height_info):
+    '''
+    special method especially meant to differentiate surface, ascent, descent limits of height information
+    this method is an experimental method for finding gps_sonde related data
+    '''
+    MIN_ASC_RATE = 1.5  # mps
+
+    data_info = dict()
+    # orig_copy = copy.copy(height_info)
+    arr_length = len(height_info)
+    # grad_data = np.gradient(height_info)
+    diff_vals = np.diff(height_info)
+    paav_len = arr_length//3
+    # print(diff_vals[:paav_len])
+    for ind, ele in enumerate(reversed(diff_vals[:paav_len])):
+        if ele <= MIN_ASC_RATE:
+            break
+    data_info['asc_start'] = paav_len - ind + 1
+
+    for ind, ele in enumerate(diff_vals[arr_length//2:]):
+        if ele <= 0:
+            break
+
+    data_info['dsc_start'] = arr_length//2 + ind
+
+    return data_info
+
