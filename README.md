@@ -219,8 +219,18 @@ encoders:
 ```
 
 
+## TODO:
+
+1. Implement multiple format saving functionality( to .mat, .csv, .nc ) files
+    > dfile.to_csv()
+    > dfile.to_mat()
+    > dfile.to_netcdf()
+
+2. Ability to add new fields programatically during runtime
+    > dfile.add_fielddata(data, new_field_specs)
+    > dfile.config.add_output(new_field)
+
 #### Tool and libraries used
 
 see the content of requirements.txt file for libraries and modules used
 
-#### what can be done
