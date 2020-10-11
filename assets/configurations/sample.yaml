@@ -1,4 +1,4 @@
-delimiter: ","
+delimiter: "comma"
 datetime_format: null
 skip_lines: 5
 field_count: 4

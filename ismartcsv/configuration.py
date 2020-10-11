@@ -159,6 +159,9 @@ class config_file(object):
         # ind = self.__field_name_to_index(name)
         return self.__field_data.get(name)
 
+    def add_field(self, fld):
+        pass
+
 
     def __field_name_to_index(self,name):
 

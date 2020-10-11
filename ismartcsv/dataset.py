@@ -153,6 +153,10 @@ class datafile(dataset):
             return datafile(dtlist,self.__config,self.__bname)
 
 
+    def add_fielddata(self, dataarr, field_spec):
+        pass
+
+
     def get_interpolator(self,pivot=None):
         
         """A Closure which returns a interpolator function drived out of instance created
