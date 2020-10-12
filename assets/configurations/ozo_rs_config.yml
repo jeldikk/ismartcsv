@@ -3,7 +3,7 @@ skip_lines: 1
 field_count: 6
 filename_format: null
 datetime_format: null
-timestamp_in_filename: null
+# timestamp_in_filename: null
 
 
 # ftype can be 'int', 'float', 'datetime'

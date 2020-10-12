@@ -3,7 +3,7 @@ skip_lines: 1
 field_count: 7
 filename_format: "uvwD%Y%m%dT%H%M%S.csv"
 datetime_format: null
-timestamp_in_filename: true
+# timestamp_in_filename: true
 
 
 # ftype can be 'int', 'float', 'datetime'

@@ -5,7 +5,7 @@ datetime_format: null
 skip_lines: 1
 field_count: 6
 filename_format: "GPSRS%Y%m%d.CSV"
-timestamp_in_filename: true
+# timestamp_in_filename: true
 
 
 # ftype can be 'int', 'float', 'datetime'
@@ -86,6 +86,12 @@ plot:
       yaxis: null
       title: 'Line Plot with Height as x-axis'
       fields: ['ws','wd','temperature','pressure','humidity']
+    
+    - type: line
+      xaxis: null
+      yaxis: 'height'
+      title: 'customised plot'
+      fields: ['ws', 'wd', 'temperature', 'pressure', 'humidity']
     
   
   folder:
