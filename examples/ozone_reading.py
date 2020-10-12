@@ -19,13 +19,17 @@ def datetime_encoder(arg, format):
         return arg.strftime(format)
 
 def filename_parser(arg, format):
-    print(arg)
+    # print(arg)
     if format is None:
         return datetime.datetime.strptime(arg[5:12], "%Y%m%d")
+    else:
+        return datetime.datetime.strptime(arg, format)
 
 def filename_encoder(arg, format):
-    print(arg)
-    print(format)
+    if format is None:
+        return arg.strftime("NewFile%Y%m%d")
+    else:
+        return arg.strftime(format)
 
 options = {
     'DATETIME_PARSER': datetime_parser,
