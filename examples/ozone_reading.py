@@ -20,7 +20,8 @@ def datetime_encoder(arg, format):
 
 def filename_parser(arg, format):
     print(arg)
-    print(format)
+    if format is None:
+        return datetime.datetime.strptime(arg[5:12], "%Y%m%d")
 
 def filename_encoder(arg, format):
     print(arg)
@@ -43,5 +44,5 @@ ozone_filename = "./full_data/datafolder/RS/ozone_sonde/se_1_20191225_1130.csv"
 
 dfile = read_file(ozone_filename, config_filename, **options)
 
-dfile.plot()
+# dfile.plot()
 
