@@ -5,14 +5,16 @@ Created on Wed Apr  8 00:24:36 2020
 
 @author: jeldikk
 """
+import os
 import sys
 import abc
 import copy
+import csv
 import json
 import collections
 import numpy as np
 
-
+from .formatters import formatter
 from .configuration import config_file
 from .utilities import str2timestamp, is_increasing, timestamp2str
 from .plotting import plot_file, plot_folder
@@ -68,17 +70,17 @@ class datafile(dataset):
 
         self.__config = config
 
-        if config.timestamp_in_filename:
-            if basename is None or config.filename_format is None:
-                print(basename,'/',config.filename_format)
-                raise ValueError(
-                    "configuation error: either raw_name or filename_format is not provided"
-                )
-            else:
-                # self.__tm = str2timestamp(basename, config.filename_format)
-                # print('basename in datafile:',basename)
-                # print(config.file_formatter)
-                self.__tm = config.filestamp_formatter.parse(basename)
+        # if config.timestamp_in_filename:
+        if basename is None or config.filename_format is None:
+            print(basename,'/',config.filename_format)
+            raise ValueError(
+                "configuation error: either raw_name or filename_format is not provided"
+            )
+        else:
+            # self.__tm = str2timestamp(basename, config.filename_format)
+            # print('basename in datafile:',basename)
+            # print(config.file_formatter)
+            self.__tm = config.filestamp_formatter.parse(basename)
                 # print(self.__tm)
 
         for dict_ele in datalist:
@@ -104,9 +106,9 @@ class datafile(dataset):
     @property
     def filestamp(self):
 
-        if not self.config.timestamp_in_filename:
-            raise NotImplementedError(
-                "timestamp_in_filename field is not defined in the configuration file")
+        # if not self.config.timestamp_in_filename:
+        #     raise NotImplementedError(
+        #         "timestamp_in_filename field is not defined in the configuration file")
 
         return self.__tm
 
@@ -224,7 +226,57 @@ class datafile(dataset):
         else:
             return np.array(self.data.get(param))
 
-    
+
+    def to_csv(self, filename):
+        
+        pass
+
+
+
+    def to_netcdf(self, filename):
+        
+        if os.path.isdir(filename):
+            #if folder is provide add a filename using filestamp_formatter.encode().nc
+            pass
+        else:
+            #if not folder use filename to store the file
+            pass
+
+    def to_mat(self, filename):
+        
+        if os.path.isdir(filename):
+            #if folder is provided add a filename using filestamp_formatter.encode().mat
+            fname = os.path.join(filename, self.__config.filestamp_formatter.encode(self.filestamp))
+        else:
+            #if not folder user filename to store the file
+            fname = filename
+        
+        
+
+    def to_json(self):
+        # this method call is specifically meant for working with userinterface... do not use this unless you know what you are doing
+
+        pass
+
+
+    def plot(self):
+
+        if not self.__config.is_plottable():
+            raise NotImplementedError("Plotting configuration is not defined in configuration, define one for file")
+
+        if self.__config.plot.get('file') is None:
+            raise ValueError("datafile plotting variants not provided")
+
+        # plot_line(self, xaxis=self.__config.plot['file']['xaxis'], yaxis=self.__config.plot['file']['yaxis'])
+        for variant in self.__config.plot['file']:
+
+            if variant['type'] == 'contour':
+                Warning("cannot plot a contour plot from a single dataset")
+                continue
+
+            plot_file(self, variant)
+
+
     @staticmethod
     def create_instance(datadict,config,basename=None):
         
@@ -245,37 +297,6 @@ class datafile(dataset):
 
         
         return datafile(dtlist,config,basename)
-
-
-    def to_csv(self, filename):
-        pass
-
-    def to_netcdf(self, filename):
-        pass
-
-    def to_mat(self, filename):
-        pass
-
-    def to_json(self):
-        pass
-
-
-    def plot(self):
-
-        if not self.__config.is_plottable():
-            raise NotImplementedError("Plotting configuration is not defined in configuration, define one for file")
-
-        if self.__config.plot.get('file') is None:
-            raise ValueError("datafile plotting variants not provided")
-
-        # plot_line(self, xaxis=self.__config.plot['file']['xaxis'], yaxis=self.__config.plot['file']['yaxis'])
-        for variant in self.__config.plot['file']:
-
-            if variant['type'] == 'contour':
-                Warning("cannot plot a contour plot from a single dataset")
-                continue
-
-            plot_file(self, variant)
 
 
 
@@ -336,8 +357,8 @@ class datafolder(dataset):
     @property
     def timestamps(self):
         
-        if not self.__config.timestamp_in_filename:
-            raise NotImplementedError("Configuration setting timestamp_in_filename should be set")
+        # if not self.__config.timestamp_in_filename:
+        #     raise NotImplementedError("Configuration setting timestamp_in_filename should be set")
 
         return self.__tmlist
 

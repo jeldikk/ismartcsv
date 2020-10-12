@@ -136,6 +136,7 @@ class field_formatter(formatter):
     def encode(self,args,decimals = 3):
         
         if isinstance(args,int):
-            return int(args)
+            return f'{int(args)}'
+            
         elif isinstance(args,float):
-            return round(args,decimals)
+            return f'{round(args,decimals)}'

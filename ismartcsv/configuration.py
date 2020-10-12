@@ -198,8 +198,8 @@ class config_file(object):
         fieldcount_cond = self.__dt['field_count'] == len(self.__dt['fields'])
         cond_checklist.append(fieldcount_cond)
 
-        timestamp_cond = False if self.__dt['timestamp_in_filename'] and self.__dt["filename_format"] is None else True
-        cond_checklist.append(timestamp_cond)
+        # timestamp_cond = False if self.__dt['timestamp_in_filename'] and self.__dt["filename_format"] is None else True
+        # cond_checklist.append(timestamp_cond)
 
         if self.is_interpolatable():
             interp_cond = True if self.__dt['interpolation']['pivot'] in self.field_labels else False

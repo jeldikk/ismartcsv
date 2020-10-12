@@ -115,10 +115,13 @@ def read_folder(folder_name, config_filename):
         temp_dfile = interp(np.arange(start,stop,step))
         dflist.append(temp_dfile)
     
-    return datafolder(dflist,pivot_values,config,filename)
+    return datafolder(dflist,pivot_values,config)
             
     # else:
     #     raise ValueError("Invalid configuration file settings.")
 
 # def read_netcdf(filename,config_filename):
 #     pass
+
+def read_from_file(datfilename, config_filename):
+    pass
