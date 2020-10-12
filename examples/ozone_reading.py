@@ -48,5 +48,10 @@ ozone_filename = "./full_data/datafolder/RS/ozone_sonde/se_1_20191225_1130.csv"
 
 dfile = read_file(ozone_filename, config_filename, **options)
 
+chunk = dfile[10:1000]
+chunk.to_csv("path/to/desktop/somefilename.csv")
+
+new_chunk = dfile[10:100]
+new_chunk.to_csv("path/to/folder/where/file/to/be/stored/")
 # dfile.plot()
 
