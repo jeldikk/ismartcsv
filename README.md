@@ -94,7 +94,7 @@ skip_lines: 1
 field_count: 7
 filename_format: "uvwD%Y%m%dT%H%M%S.csv"
 datetime_format: null
-timestamp_in_filename: true
+# timestamp_in_filename: true    # this attribute is removed further versions > 1.0.5
 
 
 # ftype can be 'int', 'float', 'datetime'
@@ -222,13 +222,17 @@ encoders:
 ## TODO:
 
 1. Implement multiple format saving functionality( to .mat, .csv, .nc ) files
-    > dfile.to_csv()
-    > dfile.to_mat()
-    > dfile.to_netcdf()
+    - [ ] dfile.to_csv()
+    - [ ] dfile.to_mat()
+    - [ ] dfile.to_netcdf()
 
 2. Ability to add new fields programatically during runtime
-    > dfile.add_fielddata(data, new_field_specs)
-    > dfile.config.add_output(new_field)
+    - [ ] dfile.add_fielddata(data, new_field_specs)
+    - [ ] dfile.config.add_output(new_field)
+
+#### suggestions:
+
+* Row should not be 
 
 #### Tool and libraries used
 
