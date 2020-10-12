@@ -71,10 +71,10 @@ class datafile(dataset):
         self.__config = config
 
         # if config.timestamp_in_filename:
-        if basename is None or config.filename_format is None:
-            print(basename,'/',config.filename_format)
+        if basename is None:
+            # print(basename,'/',config.filename_format)
             raise ValueError(
-                "configuation error: either raw_name or filename_format is not provided"
+                "configuation error: base filname is missing for parsing filestamp"
             )
         else:
             # self.__tm = str2timestamp(basename, config.filename_format)
@@ -229,7 +229,54 @@ class datafile(dataset):
 
     def to_csv(self, filename):
         
-        pass
+        if os.path.isdir(filename):
+            # if folder is provided add a filename using filestamp_formatter.encode().csv
+            encodedname = self.__config.filestamp_formatter.encode(self.filestamp)
+            if encodedname is None:
+                raise ValueError("filestamp formatter encoder returned None value, define one encoder function")
+            fname = os.path.join(filename, encodedname)
+            # print(f'Writing {self.__length} rows to {fname}')
+        else:
+            #if not folder use filename to store the file
+            fname = filename
+
+        print(f"Writing {self.__length} rows to {fname}")
+        with open(fname, 'w', newline='') as csvfile:
+            outputfields = self.__config.output['fields']
+
+            delimiter = self.__config.delimiter
+            if delimiter == 'comma':
+                delimiter = ','
+            elif delimiter == 'tab':
+                delimiter = '\t'
+            elif delimiter == 'space':
+                delimiter = ' '
+
+            print('delimiter is ', delimiter)
+
+            headerlist = list()
+            for field_name in outputfields:
+                field_spec = self.__config.get_field(field_name)
+                headerlist.append(f'{field_spec.label}({field_spec.units})')
+
+            csvfile.write(delimiter.join(headerlist) + '\n')
+
+            for item_idx in range(self.__length):
+                itemobj = self[item_idx]
+                row = list()
+
+                for field_name in outputfields:
+                    field_spec = self.__config.get_field(field_name)
+                    
+                    if field_spec.ftype == 'datetime':
+                        val = self.__config.timestamp_formatter.encode(itemobj[field_name])
+                    else:
+                        fmtr = formatter.make_formatter(field_spec.ftype)
+                        val = fmtr.encode(itemobj[field_name])
+
+                    row.append(val)
+                print(row)
+                csvfile.write(delimiter.join(row) + '\n')
 
 
 
@@ -319,8 +366,8 @@ class datafolder(dataset):
         self.__length = len(pivot_list)
 
 
-        if config.timestamp_in_filename:
-            self.__tmlist = list()
+        # if config.timestamp_in_filename:
+        self.__tmlist = list()
 
         if not all([True if isinstance(ele,datafile) else False for ele in datafilelist]):
             raise ValueError("One/Some of the element is out of context")
@@ -355,7 +402,7 @@ class datafolder(dataset):
         return self.__data
 
     @property
-    def timestamps(self):
+    def filestamps(self):
         
         # if not self.__config.timestamp_in_filename:
         #     raise NotImplementedError("Configuration setting timestamp_in_filename should be set")
