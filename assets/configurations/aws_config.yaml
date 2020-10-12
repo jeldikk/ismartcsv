@@ -4,7 +4,7 @@ datetime_format: "%d-%m-%Y %H:%M:%S"
 skip_lines: 1
 field_count: 6
 filename_format: "AWS%Y%m%d.CSV"
-timestamp_in_filename: true
+# timestamp_in_filename: true
 
 fields:
     - name: 'timestamp'
