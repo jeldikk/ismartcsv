@@ -106,26 +106,37 @@ class config_file(object):
 
     @property
     def filestamp_formatter(self):
+        """filename_formatter instance of formatter baseclass 
+        useful for parsing and encoding filenames
+
+        Returns:
+            filename_formatter: filename_formatter instance of custom ismart formatter class
+        """
         return self.__ffmt
 
 
     @property
     def timestamp_formatter(self):
+        """datetime_formatter instance of formatter baseclass useful for parsing datetime field variants
+
+        Returns:
+            datetime_formatter: datetime_formatter instance of custom ismart formatter class
+        """
         return self.__dfmt
 
 
     def __getitem__(self, ind):
 
-        """this is called to access items using index
+        """this is called to access field variant by index by [] notation
 
         Args:
             ind (int): [field item by index and index starts from 0]
 
         Raises:
-            IndexError: [description]
+            IndexError: if arg is more than field_count raises this error
 
         Returns:
-            [type]: [description]
+            field_tuple: instance of field_tuple
         """
 
         if ind > self.__dt['field_count'] - 1:
@@ -136,6 +147,17 @@ class config_file(object):
 
         
     def __getattr__(self, attr):
+        """get top-level attributes of config file(i.e., delimiter, datetime_format, filename_format, fields, interpolation, plot) by dot notation
+
+        Args:
+            attr (string): top level attributes of config file
+
+        Raises:
+            AttributeError: If no such attribute is defined in config file
+
+        Returns:
+            dict/value: dictionary or value related to that attribute
+        """
 
         if attr in self.__dt.keys():
             return self.__dt.get(attr)
@@ -154,7 +176,14 @@ class config_file(object):
 
 
     def get_field(self,name):
+        """get field variant by field name from configuration instance
 
+        Args:
+            name (str): one of the field names defined in the config file
+
+        Returns:
+            field_tuple: field_tuple instance of field variant
+        """
 
         # ind = self.__field_name_to_index(name)
         return self.__field_data.get(name)
@@ -164,6 +193,17 @@ class config_file(object):
 
 
     def __field_name_to_index(self,name):
+        """private method call which maps name to index for further retrieval
+
+        Args:
+            name (str): field name defined in field config section
+
+        Raises:
+            ValueError: if No such field is found in field variants
+
+        Returns:
+            int: index of the field with the fieldname
+        """
 
         for ind,val in enumerate(self.field_labels):
             if val == name:
@@ -174,11 +214,20 @@ class config_file(object):
 
 
     def is_interpolatable(self):
+        """return True if valid interpolation config section defined in configfile
 
+        Returns:
+            bool: boolean whether the interpolation section defined or not
+        """
         return True if self.__dt.get('interpolation') else False
 
         
     def is_plottable(self):
+        """return True if valid plot config section defined in configfile
+
+        Returns:
+            bool: boolean whether the plot section defined or not
+        """
 
         return True if self.__dt.get('plot') else False
 
@@ -223,12 +272,19 @@ class config_file(object):
             return False
 
     def show(self):
+        """a no-arg method call to check or see the values parsed from the provided config filename
+        """
         print(self.__dt)
         # pass
 
 
 
 def make_fielddata(**kwargs):
+    """utility function to create a field_tuple instance from provided kwargs
+
+    Returns:
+        [type]: [description]
+    """
     return field_tuple(
         kwargs['name'],
         kwargs['colno'],

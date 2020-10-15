@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr  9 10:06:16 2020
-
 @author: jeldikk
 """
 import datetime

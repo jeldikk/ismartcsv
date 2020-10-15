@@ -1,5 +1,8 @@
-# -*- coding: utf-8 -*-
+"""
+    A smart way to handler scientific instrument generated csv data
 
+    @author jeldikk
+"""
 import os
 import sys
 import numpy as np
@@ -14,6 +17,20 @@ from .formatters import formatter
 
 
 def read_file(data_filename, config_filename,**kwargs):
+
+    """Adapter function used to read/parse a csv file with provided configuration file
+
+    Args:
+        data_filename (str): relative or absolute path of datafile name(if present in curdir prepend ./ to filename)
+        config_filename (str): relative or absolute path of configfile name(if present in curdir prepend ./ to filename)
+
+    Raises:
+        TypeError: if data_filename is not a file type TypeError will be raised 
+        ValueError: if the configuration instance is not valid, ValueError will be raised
+
+    Returns:
+        (datafile): an instance of ismartcsv datafile class
+    """
 
     if not os.path.isfile(data_filename):
         raise TypeError("read_file accepts only filename but got something else")
@@ -83,6 +100,21 @@ def read_file(data_filename, config_filename,**kwargs):
 
 
 def read_folder(folder_name, config_filename):
+    """Adapter function useful for parsing a set of csv file present in a folder
+
+    Args:
+        folder_name (string): relative or absolute path of folder containing datafiles
+        config_filename (string): relative or absolute path of config file specifying the schematic of datafiles
+
+    Raises:
+        TypeError: if folder_name is not a folder type TypeError will be raised
+        ValueError: If configuration file is not a valid instance
+        ValueError: if start, stop, step fields are missing in interpolation config section
+        ValueError: if invalid interpolation config section is defined in config file
+
+    Returns:
+        [datafolder]: an instance of ismartcsv datafolder class
+    """
 
     if not os.path.isdir(folder_name):
         raise TypeError("read_folder accepts only folder but got something else")
@@ -116,12 +148,10 @@ def read_folder(folder_name, config_filename):
         dflist.append(temp_dfile)
     
     return datafolder(dflist,pivot_values,config)
-            
-    # else:
-    #     raise ValueError("Invalid configuration file settings.")
+
 
 # def read_netcdf(filename,config_filename):
 #     pass
 
-def read_from_file(datfilename, config_filename):
+def read_from_file(datfilename, config_filename, base_folder="./"):
     pass

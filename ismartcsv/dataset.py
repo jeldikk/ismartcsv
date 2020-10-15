@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Apr  8 00:24:36 2020
 
 @author: jeldikk
 """
@@ -88,23 +87,46 @@ class datafile(dataset):
                 self.__data[field].append(dict_ele[field])
 
     def __del__(self):
+        """
+        destructor of datefile class instance
+        """
         del self.__data
         # del self.__config
 
     @property
     def config(self):
+        """getter property of datafile instance pointing to config_file instance
+
+        Returns:
+            config_file: instance of config_file of ismartcsv.configuration
+        """
         return self.__config
 
     @property
     def fields(self):
+        """getter property of datafile instance
+
+        Returns:
+            list: list of field names defined in fields config section
+        """
         return self.__config.field_labels
 
     @property
     def data(self):
+        """getter property of datafile instance
+
+        Returns:
+            OrderedDict: OrderedDict container with all field names as keys and data as values
+        """
         return self.__data
 
     @property
     def filestamp(self):
+        """getter property useful for referencing the datafile instance, this is useful for creating datafolder object
+
+        Returns:
+            [type]: [description]
+        """
 
         # if not self.config.timestamp_in_filename:
         #     raise NotImplementedError(
@@ -293,7 +315,8 @@ class datafile(dataset):
         
         if os.path.isdir(filename):
             #if folder is provided add a filename using filestamp_formatter.encode().mat
-            fname = os.path.join(filename, self.__config.filestamp_formatter.encode(self.filestamp))
+            encoded_name = self.__config.filestamp_formatter.encode(self.filestamp)
+            fname = os.path.join(filename, encoded_name)
         else:
             #if not folder user filename to store the file
             fname = filename
