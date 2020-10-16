@@ -27,7 +27,7 @@ def filename_parser(arg, format):
 
 def filename_encoder(arg, format):
     if format is None:
-        return arg.strftime("NewFile%Y%m%d")
+        return arg.strftime("NewFile%Y%m%d.csv")
     else:
         return arg.strftime(format)
 
