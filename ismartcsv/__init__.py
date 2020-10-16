@@ -64,8 +64,8 @@ def read_file(data_filename, config_filename,**kwargs):
             line_split = line.strip().split(delimiter)
             line_split = [line.strip() for line in line_split]
 
-            if not all([line_split[field.colno - 1] != field.nullval for key,field in config.fields.items()]):
-                continue
+            # if not all([line_split[field.colno - 1] != field.nullval for key,field in config.fields.items()]):
+            #     continue
 
             sample_dict = dict()
 
@@ -82,7 +82,7 @@ def read_file(data_filename, config_filename,**kwargs):
                     val = fmter.parse(samp_txt)
                     # print(val)
                 except Exception as ex:
-                    print(ex)
+                    # print(ex)
                     # print('execption occured for ', fmter)
                     val = field.ifnull
                 finally:
@@ -91,7 +91,10 @@ def read_file(data_filename, config_filename,**kwargs):
                         # print("val in readfile :", val)
                         sample_dict[field.name] = val
                     else:
-                        sample_dict[field.name] = val * field.factor
+                        if val is None:
+                            sample_dict[field.name] = np.NaN
+                        else:
+                            sample_dict[field.name] = val * field.factor
 
             dict_list.append(sample_dict)
 

@@ -125,7 +125,7 @@ class datafile(dataset):
         """getter property useful for referencing the datafile instance, this is useful for creating datafolder object
 
         Returns:
-            [type]: [description]
+            datetime(most probably): python object specifying the file
         """
 
         # if not self.config.timestamp_in_filename:
@@ -274,7 +274,7 @@ class datafile(dataset):
             elif delimiter == 'space':
                 delimiter = ' '
 
-            print('delimiter is ', delimiter)
+            # print('delimiter is ', delimiter)
 
             headerlist = list()
             for field_name in outputfields:
@@ -297,7 +297,7 @@ class datafile(dataset):
                         val = fmtr.encode(itemobj[field_name])
 
                     row.append(val)
-                print(row)
+                # print(row)
                 csvfile.write(delimiter.join(row) + '\n')
 
 
