@@ -2,6 +2,24 @@
 ### A smart way to work with scientific friendly csv data in python. 
 ___ 
 
+### Installation
+
+**Install globally**
+
+```sh
+  $ pip3 install ismartcsv
+```
+
+**Try with virtualenv**
+```sh
+  $ virtualenv -p python3 venv #create a new python environment
+  $ source ./venv/bin/activate #activate the environment
+  (venv)$ pip install ismartcsv
+```
+
+> **See `examples/` folder to get better understanding of package works. `assets/` folder has supporting configuration and data files**
+
+## Description
 Just declare all the meta, field and plot configurations required to analyse data in a seperate yaml config file with self explaining fields. Pass this configuration filename and data filename to ismartcsv code base through prebuilt adapter function that returns custom ismartcsv class instances. The configuration file thou created will work perfectly with all the datafiles obeying the schema declared in config file( _a sample template config file given below_ ). **_ismartcsv_** will consume and take care of all the redundant bootstrap code and makes it easy behind the scenes.
 
 > Declarative style of working approach is best suitable in making analysis more lively and easily maintainable code. Same code base can do the job for different configuration files. 
@@ -222,17 +240,18 @@ encoders:
 ## TODO:
 
 1. Implement multiple format saving functionality( to .mat, .csv, .nc ) files
-    - [ ] dfile.to_csv()
+    - [x] dfile.to_csv()
     - [ ] dfile.to_mat()
     - [ ] dfile.to_netcdf()
 
 2. Ability to add new fields programatically during runtime
     - [ ] dfile.add_fielddata(data, new_field_specs)
     - [ ] dfile.config.add_output(new_field)
+3. Implement utility function to apply statistics on data(interface design TBD)
 
 #### suggestions:
 
-* Row should not be 
+- [x] Row should not be ignored if any field is parsed as `None`
 
 #### Tool and libraries used
 
