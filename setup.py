@@ -18,8 +18,8 @@ packages=['ismartcsv',]
 
 #setup automatic publishing to pypi, use $python setup.py publish
 if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist bdist_wheel')
-    os.system('twine upload dist/*')
+    # os.system('python setup.py sdist bdist_wheel')
+    os.system(f'twine upload dist/ismartcsv-{__version__}-py3-none-any.whl')
     sys.exit()
 
 #to build the package, use $python setup.py build
